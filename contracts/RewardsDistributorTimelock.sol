@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./interfaces/IPancakeRouter01.sol";
-
 import "./interfaces/IPancakeRouter02.sol";
 
 import "@openzeppelin/contracts/governance/TimelockController.sol";

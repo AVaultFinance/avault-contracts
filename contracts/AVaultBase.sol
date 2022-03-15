@@ -81,7 +81,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
     // Receives new deposits and mint cLP to user
     function deposit(address _userAddress, uint256 _wantAmt)
-        public
+        external
         virtual
         nonReentrant
         whenNotPaused
@@ -102,7 +102,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         _mint(_userAddress, sharesAdded);
 
         if(isEarnable && _dice()){
-            earn();
+            _earn();
         }else{
             _farm();
         }
@@ -149,7 +149,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         burn(_shareAmount);
 
         if(isEarnable && _dice()){
-            earn();
+            _earn();
         }
 
         uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
@@ -183,7 +183,11 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     // 2. Converts farm tokens into want tokens
     // 3. Deposits want tokens
 
-    function earn() public virtual nonReentrant whenNotPaused {
+    function earn() external virtual nonReentrant whenNotPaused{
+        _earn();
+    }
+
+    function _earn() internal virtual  {
         lastEarnBlock = block.number;
         
         // Harvest farm tokens
@@ -348,7 +352,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     function convertDustToEarned() public virtual whenNotPaused {
         require(!isCAKEStaking, "isCAKEStaking");
 
-        // Converts dust tokens into earned tokens, which will be reinvested on the next earn().
+        // Converts dust tokens into earned tokens, which will be reinvested on the next _earn().
 
         // Converts token0 dust (if any) to earned tokens
         uint256 token0Amt = IERC20(token0Address).balanceOf(address(this));
