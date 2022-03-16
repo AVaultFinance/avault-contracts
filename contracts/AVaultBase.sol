@@ -116,13 +116,15 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
     function _farm() internal virtual {
         uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
-        wantLockedTotal = wantLockedTotal.add(wantAmt);
-        IERC20(wantAddress).safeIncreaseAllowance(farmContractAddress, wantAmt);
+        if(wantAmt > 0){
+            wantLockedTotal = wantLockedTotal.add(wantAmt);
+            IERC20(wantAddress).safeIncreaseAllowance(farmContractAddress, wantAmt);
 
-        if (isCAKEStaking) {
-            IPancakeswapFarm(farmContractAddress).enterStaking(wantAmt); // Just for CAKE staking, we dont use deposit()
-        } else {
-            IPancakeswapFarm(farmContractAddress).deposit(pid, wantAmt);
+            if (isCAKEStaking) {
+                IPancakeswapFarm(farmContractAddress).enterStaking(wantAmt); // Just for CAKE staking, we dont use deposit()
+            } else {
+                IPancakeswapFarm(farmContractAddress).deposit(pid, wantAmt);
+            }
         }
     }
 
@@ -200,6 +202,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
         uint256 earnedAmt = IERC20(_earnedAddress).balanceOf(address(this));
         if(earnedAmt < 100){
+            _farm();
             return;
         }
 

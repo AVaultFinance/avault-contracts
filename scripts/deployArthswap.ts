@@ -30,7 +30,7 @@ async function main() {
     [wsdn, kac],
     [kac], [kac, wsdn],
     [kac], [wsdn, kac],
-    "Avault Kaco KAC-WSDN LP", "AK-KW");
+    "Avault Kaco KAC-wSDN LP", "AKKS");
 
   await AVaultPCS.deployed();
 
