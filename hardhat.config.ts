@@ -40,7 +40,7 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    testnet: {
+    shidenTestnet: {
       url: "https://rpc.shibuya.astar.network:8545",
       chainId: 81,
       gasPrice: 1000000000,
@@ -58,7 +58,7 @@ const config: HardhatUserConfig = {
       gasPrice: 1000000000,
       accounts: {mnemonic: mnemonic}
     },
-    bscmainnet: {
+    bscMainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 5000000000,
@@ -73,7 +73,7 @@ const config: HardhatUserConfig = {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   solpp: {
-    noFlatten: false
+    noFlatten: true
   }
 };
 

@@ -43,8 +43,6 @@ interface IStrategy {
     function noTimeLockFunc3() external;
 
 
-    function emergencyWithdraw() external;
-
     function setIsEarnable(bool _isEarnable) external;
 
 }
@@ -155,10 +153,6 @@ contract RewardsDistributorTimelock is
         onlyRole(EXECUTOR_ROLE)
     {
         IStrategy(_stratAddress).noTimeLockFunc3();
-    }
-
-    function emergencyWithdraw(address _stratAddress) external onlyRole(EXECUTOR_ROLE){
-        IStrategy(_stratAddress).emergencyWithdraw();
     }
 
     function setIsEarnable(address _stratAddress, bool _isEarnable) external onlyRole(EXECUTOR_ROLE){
