@@ -3,7 +3,7 @@ pragma solidity >=0.6.12;
 interface IPancakeswapFarm {
     function poolLength() external view returns (uint256);
 
-    function userInfo() external view returns (uint256);
+    function userInfo(uint, address) external view returns (uint amount, uint rewardDebt);
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to)

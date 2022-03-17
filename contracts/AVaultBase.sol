@@ -107,17 +107,19 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
             _farm();
         }
 
+        updateWantLockedTotal();
+
         return sharesAdded;
     }
 
     function farm() public virtual nonReentrant {
         _farm();
+        updateWantLockedTotal();
     }
 
     function _farm() internal virtual {
         uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
         if(wantAmt > 0){
-            wantLockedTotal = wantLockedTotal.add(wantAmt);
             IERC20(wantAddress).safeIncreaseAllowance(farmContractAddress, wantAmt);
 
             if (isCAKEStaking) {
@@ -126,6 +128,12 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
                 IPancakeswapFarm(farmContractAddress).deposit(pid, wantAmt);
             }
         }
+    }
+
+    function updateWantLockedTotal() internal virtual{
+        (uint _poolAmt,) = IPancakeswapFarm(farmContractAddress).userInfo(pid, address(this));
+        uint _thisAmt = IERC20(wantAddress).balanceOf(address(this));
+        wantLockedTotal = _thisAmt + _poolAmt;
     }
 
     function _unfarm(uint256 _wantAmt) internal virtual {
@@ -164,13 +172,9 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
             _wantAmt = wantAmt;
         }
 
-        if (wantLockedTotal < _wantAmt) {
-            _wantAmt = wantLockedTotal;
-        }
-
-        wantLockedTotal = wantLockedTotal.sub(_wantAmt);
-
         IERC20(wantAddress).safeTransfer(_userAddress, _wantAmt);
+
+        updateWantLockedTotal();
     }
 
     function emergencyWithdraw()
@@ -187,6 +191,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
     function earn() external virtual nonReentrant whenNotPaused{
         _earn();
+        updateWantLockedTotal();
     }
 
     function _earn() internal virtual  {
@@ -201,7 +206,8 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         }
 
         uint256 earnedAmt = IERC20(_earnedAddress).balanceOf(address(this));
-        if(earnedAmt < 100){
+        //skip earning if earnedAmt too small.
+        if(earnedAmt < 10000){
             _farm();
             return;
         }
