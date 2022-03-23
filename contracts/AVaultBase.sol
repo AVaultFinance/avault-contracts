@@ -85,7 +85,6 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         virtual
         nonReentrant
         whenNotPaused
-        returns (uint256)
     {
         IERC20(wantAddress).safeTransferFrom(
             address(msg.sender),
@@ -108,8 +107,6 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         }
 
         updateWantLockedTotal();
-
-        return sharesAdded;
     }
 
     function farm() public virtual nonReentrant {

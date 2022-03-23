@@ -1,7 +1,6 @@
 pragma solidity >=0.6.12;
 
-// import "./IPancakeRouter01.sol";
-import "/Users/bz/MyWorkspace/cake/avault-astar/contracts/interfaces/IPancakeRouter01.sol";
+import "./IPancakeRouter01.sol";
 
 interface IPancakeRouter02 is IPancakeRouter01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(

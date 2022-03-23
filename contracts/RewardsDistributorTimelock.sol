@@ -57,8 +57,7 @@ contract RewardsDistributorTimelock is
 
     address payable public treasuryAddress;
     address payable public AVAStakingAddress;
-    address public rewardAddress = 0x0f933Dc137D21cA519ae4C7E93f87a4C8EF365Ef;    //ava-sdn LP
-    address public avaAddress = 0xb12c13e66AdE1F72f71834f2FC5082Db8C091358;     //kac
+    address public rewardToken = 0x0f933Dc137D21cA519ae4C7E93f87a4C8EF365Ef;    //ava-sdn LP
 
     uint256 public AVAStakingRewardsFactor; // X/10,000 of rewards go to AVA staking vault. The rest goes to treasury.
 
@@ -162,40 +161,18 @@ contract RewardsDistributorTimelock is
 
     function distributeRewards() external
     {
-        uint256 rewardsAmt = IERC20(rewardAddress).balanceOf(address(this));
+        uint256 rewardsAmt = IERC20(rewardToken).balanceOf(address(this));
 
         if (AVAStakingRewardsFactor > 0) {
             uint256 AVAStakingRewards =
                 rewardsAmt.mul(AVAStakingRewardsFactor).div(1000);
-            IERC20(rewardAddress).safeTransfer(
+            IERC20(rewardToken).safeTransfer(
                 AVAStakingAddress,
                 AVAStakingRewards
             );
             rewardsAmt = rewardsAmt.sub(AVAStakingRewards);
         }
 
-        IERC20(rewardAddress).safeTransfer(treasuryAddress, rewardsAmt);
-    }
-
-    function _safeSwap(
-        address _uniRouterAddress,
-        uint256 _amountIn,
-        uint256 _slippageFactor,
-        address[] memory _path,
-        address _to,
-        uint256 _deadline
-    ) internal virtual {
-        uint256[] memory amounts =
-            IPancakeRouter02(_uniRouterAddress).getAmountsOut(_amountIn, _path);
-        uint256 amountOut = amounts[amounts.length.sub(1)];
-
-        IPancakeRouter02(_uniRouterAddress)
-            .swapExactTokensForTokensSupportingFeeOnTransferTokens(
-            _amountIn,
-            amountOut.mul(_slippageFactor).div(1000),
-            _path,
-            _to,
-            _deadline
-        );
+        IERC20(rewardToken).safeTransfer(treasuryAddress, rewardsAmt);
     }
 }

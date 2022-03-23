@@ -6,7 +6,6 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "@nomiclabs/hardhat-solpp";
 import { mnemonic, BSCSCANAPIKEY} from '../secret.json';
 
 dotenv.config();
@@ -71,9 +70,6 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
-  },
-  solpp: {
-    noFlatten: true
   }
 };
 
