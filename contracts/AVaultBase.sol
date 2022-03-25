@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 
 import "./interfaces/IPancakeswapFarm.sol";
 import "./interfaces/IPancakeRouter02.sol";
+import "./interfaces/IWETH.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -15,11 +16,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-interface IWETH is IERC20 {
-    function deposit() external payable;
 
-    function withdraw(uint256 wad) external;
-}
 
 abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     // Maximises yields in pancakeswap
