@@ -55,7 +55,7 @@ async function deployVault(lpAddress:string, pid:number, earnToToken0:string[], 
   const AVaultPCSContract = await ethers.getContractFactory("AVaultPCS", officialUser);
   const vault = await AVaultPCSContract.deploy([lpAddress, farmContractAddress, kacRouterAddress, kacRouterAddress, timelockAddress], 
     pid, false, [kac, wsdn], [wsdn, kac],
-    earnToToken0, earnTotoken1,
+    earnToToken0.slice(), earnTotoken1.slice(),
     earnToToken0.reverse(), earnTotoken1.reverse(),
     name, symbol);
   await vault.deployed();
