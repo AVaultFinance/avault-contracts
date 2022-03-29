@@ -99,14 +99,13 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
         if(isEarnable && _dice()){
             _earn();
-        }else{
-            _farm();
         }
+        _farm();
 
         updateWantLockedTotal();
     }
 
-    function farm() public virtual nonReentrant {
+    function farm() external virtual nonReentrant {
         _farm();
         updateWantLockedTotal();
     }
@@ -168,6 +167,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
         IERC20(wantAddress).safeTransfer(_userAddress, _wantAmt);
 
+        _farm();
         updateWantLockedTotal();
     }
 
@@ -185,6 +185,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
     function earn() external virtual nonReentrant whenNotPaused{
         _earn();
+        _farm();
         updateWantLockedTotal();
     }
 
@@ -202,18 +203,16 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         uint256 earnedAmt = IERC20(_earnedAddress).balanceOf(address(this));
         //skip earning if earnedAmt too small.
         if(earnedAmt < 10000){
-            _farm();
             return;
         }
 
         earnedAmt = buyBack(earnedAmt);
 
+        // Converts farm tokens into want tokens
         if (isCAKEStaking || (wantAddress == _earnedAddress)) {
-            _farm();
             return;
         }
 
-        // Converts farm tokens into want tokens
         address _uniRouterAddress = uniRouterAddress;
         IERC20(_earnedAddress).safeApprove(_uniRouterAddress, 0);
         IERC20(_earnedAddress).safeIncreaseAllowance(
@@ -268,8 +267,6 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
                 block.timestamp.add(600)
             );
         }
-
-        _farm();
     }
 
     //convert earned to AVA-WETH LP
@@ -286,7 +283,6 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
         //convert all to WETH
         uint256 buyBackAmt = _earnedAmt.mul(buyBackRate).div(buyBackRateMax);
-        remainAmt = _earnedAmt - buyBackAmt;
         if (_earnedAddress != _wethAddress){
             if(_earnedAddress == _AVAAddress){
                 buyBackAmt = buyBackAmt / 2;
@@ -350,6 +346,8 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
                 block.timestamp.add(600)
             );
         }
+        
+        return IERC20(_earnedAddress).balanceOf(address(this));
     }
 
     function convertDustToEarned() public virtual whenNotPaused {
