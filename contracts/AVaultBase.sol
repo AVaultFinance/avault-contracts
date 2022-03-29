@@ -54,7 +54,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     uint256 public slippageFactor = 950; // 5% default slippage tolerance
     uint256 public constant slippageFactorUL = 995;
 
-    uint256 public diceModulus = 7200;
+    uint256 public diceModulus = 3600; //half of a day
 
     address[] public earnedToWethPath;
     address[] public wethToAVAPath;
@@ -539,10 +539,10 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     function _dice() internal view returns(bool){
         uint randomNum = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, blockhash(block.number))));
         uint blockDiff = block.number - lastEarnBlock;
-        return square(blockDiff) > square((randomNum % (diceModulus + blockDiff)));
+        return square(blockDiff) > (randomNum % square(diceModulus + blockDiff));
     }
 
-    //as the param is small, no need to worry about overflow
+    //as the param is small, no need to worry about overflow. sqrt(2^256) = 340,282,366,920,938,463,463,374,607,431,768,211,456
     function square(uint x) internal pure returns (uint) {
         return x * x;
     }
