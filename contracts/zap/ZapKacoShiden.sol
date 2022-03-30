@@ -63,7 +63,7 @@ contract ZapKacoShiden is IZap, Ownable {
 
     //ERC20 -> LP
     //ERC20 -> ERC20
-    function zapInToken(address _from, uint amount, address _to) external override returns (uint){
+    function zapInToken(address _from, uint amount, address _to) external override {
         IERC20(_from).safeTransferFrom(msg.sender, address(this), amount);
         _approveTokenIfNeeded(_from);
 
@@ -78,32 +78,30 @@ contract ZapKacoShiden is IZap, Ownable {
                 uint sellAmount = amount.div(2);
                 uint otherAmount = _swap(_from, sellAmount, other, address(this));
                 pair.skim(address(this));
-                (,,uint lpAmt) = ROUTER.addLiquidity(_from, other, amount.sub(sellAmount), otherAmount, 0, 0, msg.sender, block.timestamp);
-                return lpAmt;
+                ROUTER.addLiquidity(_from, other, amount.sub(sellAmount), otherAmount, 0, 0, msg.sender, block.timestamp);
             } else {
                 uint ethAmount = _from == WETH ? _unwrapETH(amount) : _swapTokenForETH(_from, amount, address(this));
-                return _swapETHToFlip(_to, ethAmount, msg.sender);
+                _swapETHToFlip(_to, ethAmount, msg.sender);
             }
         } else {
-            return _swap(_from, amount, _to, msg.sender);
+            _swap(_from, amount, _to, msg.sender);
         }
     }
 
     //ETH -> LP
     //ETH -> ERC20
-    function zapIn(address _to) external payable override returns (uint){
-        return _swapETHToFlip(_to, msg.value, msg.sender);
+    function zapIn(address _to) external payable override {
+        _swapETHToFlip(_to, msg.value, msg.sender);
     }
 
-    //LP -> ERC20s
+    //LP -> ERC20
     //ERC20 -> ETH
-    function zapOut(address _from, uint amount) external override returns (uint, uint){
+    function zapOut(address _from, uint amount) external override {
         IERC20(_from).safeTransferFrom(msg.sender, address(this), amount);
         _approveTokenIfNeeded(_from);
 
         if (!isFlip(_from)) {
-            uint ethAmt = _swapTokenForETH(_from, amount, msg.sender);
-            return (ethAmt, 0);
+            _swapTokenForETH(_from, amount, msg.sender);
         } else {
             IPancakePair pair = IPancakePair(_from);
             address token0 = pair.token0();
@@ -114,11 +112,9 @@ contract ZapKacoShiden is IZap, Ownable {
             }
 
             if (token0 == WETH || token1 == WETH) {
-                (uint amtA,uint amtB) = ROUTER.removeLiquidityETH(token0 != WETH ? token0 : token1, amount, 0, 0, msg.sender, block.timestamp);
-                return (amtA, amtB);
+                ROUTER.removeLiquidityETH(token0 != WETH ? token0 : token1, amount, 0, 0, msg.sender, block.timestamp);
             } else {
-                (uint amtA,uint amtB) = ROUTER.removeLiquidity(token0, token1, amount, 0, 0, msg.sender, block.timestamp);
-                return (amtA, amtB);
+                ROUTER.removeLiquidity(token0, token1, amount, 0, 0, msg.sender, block.timestamp);
             }
         }
     }
@@ -131,9 +127,9 @@ contract ZapKacoShiden is IZap, Ownable {
         }
     }
 
-    function _swapETHToFlip(address flip, uint amount, address receiver) private returns (uint){
+    function _swapETHToFlip(address flip, uint amount, address receiver) private {
         if (!isFlip(flip)) {
-            return _swapETHForToken(flip, amount, receiver);
+            _swapETHForToken(flip, amount, receiver);
         } else {
             // flip
             IPancakePair pair = IPancakePair(flip);
@@ -146,8 +142,7 @@ contract ZapKacoShiden is IZap, Ownable {
 
                 _approveTokenIfNeeded(token);
                 pair.skim(address(this));
-                (,,uint lpAmt) = ROUTER.addLiquidityETH{value : amount.sub(swapValue)}(token, tokenAmount, 0, 0, receiver, block.timestamp);
-                return lpAmt;
+                ROUTER.addLiquidityETH{value : amount.sub(swapValue)}(token, tokenAmount, 0, 0, receiver, block.timestamp);
             } else {
                 uint swapValue = amount.div(2);
                 uint token0Amount = _swapETHForToken(token0, swapValue, address(this));
@@ -156,8 +151,7 @@ contract ZapKacoShiden is IZap, Ownable {
                 _approveTokenIfNeeded(token0);
                 _approveTokenIfNeeded(token1);
                 pair.skim(address(this));
-                (,,uint lpAmt) = ROUTER.addLiquidity(token0, token1, token0Amount, token1Amount, 0, 0, receiver, block.timestamp);
-                return lpAmt;
+                ROUTER.addLiquidity(token0, token1, token0Amount, token1Amount, 0, 0, receiver, block.timestamp);
             }
         }
     }
