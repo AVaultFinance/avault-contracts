@@ -5,6 +5,7 @@ pragma solidity 0.8.4;
 import "./interfaces/IPancakeswapFarm.sol";
 import "./interfaces/IPancakeRouter02.sol";
 import "./interfaces/IWETH.sol";
+import "./interfaces/IDistributable.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -45,7 +46,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
     uint256 public buyBackRate = 300;
     uint256 public constant buyBackRateMax = 10000; // 100 = 1%
     uint256 public constant buyBackRateUL = 800;
-    address public buyBackAddress;
+    IDistributable public buyBackAddress;
 
     uint256 public withdrawFeeFactor = 9990; // 0.1% withdraw fee - goes to pool
     uint256 public constant withdrawFeeFactorMax = 10000;
@@ -71,7 +72,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
     event SetUniRouterAddress(address _uniRouterAddress);
     event SetWethToAvaRouterAddress(address _wethToAvaRouterAddress);
-    event SetBuyBackAddress(address _buyBackAddress);
+    event SetBuyBackAddress(IDistributable _buyBackAddress);
     event PathsUpdated();
     event SetDiceModulus(uint _diceModulus);
     event SetIsEarnable(bool _isEarnable);
@@ -327,6 +328,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         uint256 wethAmtFinal = IERC20(_wethAddress).balanceOf(address(this));
         uint256 avaAmtFinal = IERC20(_AVAAddress).balanceOf(address(this));
         if (wethAmtFinal > 0 && avaAmtFinal > 0) {
+            IDistributable _buyBackAddress = buyBackAddress;
             IERC20(_wethAddress).safeIncreaseAllowance(
                 _wethToAvaRouterAddress,
                 wethAmtFinal
@@ -342,9 +344,11 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
                 avaAmtFinal,
                 0,
                 0,
-                buyBackAddress,
+                address(_buyBackAddress),
                 block.timestamp.add(600)
             );
+
+            _buyBackAddress.distributeRewards();
         }
         
         return IERC20(_earnedAddress).balanceOf(address(this));
@@ -468,7 +472,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         emit SetWethToAvaRouterAddress(_wethToAvaRouterAddress);
     }
 
-    function setBuyBackAddress(address _buyBackAddress)
+    function setBuyBackAddress(IDistributable _buyBackAddress)
         public
         virtual
         onlyOwner

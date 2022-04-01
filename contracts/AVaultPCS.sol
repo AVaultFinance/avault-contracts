@@ -39,6 +39,6 @@ contract AVaultPCS is AVaultBase {
         token0ToEarnedPath = _token0ToEarnedPath;
         token1ToEarnedPath = _token1ToEarnedPath;
 
-        buyBackAddress = _addresses[4];
+        buyBackAddress = IDistributable(_addresses[4]);
     }
 }

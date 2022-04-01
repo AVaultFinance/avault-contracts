@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./interfaces/IPancakeRouter02.sol";
+import "./interfaces/IDistributable.sol";
 
 import "@openzeppelin/contracts/governance/TimelockController.sol";
 
@@ -50,7 +51,8 @@ interface IStrategy {
 
 contract RewardsDistributorTimelock is
     TimelockController,
-    ReentrancyGuard
+    ReentrancyGuard,
+    IDistributable
 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -159,7 +161,7 @@ contract RewardsDistributorTimelock is
     }
 
 
-    function distributeRewards() external
+    function distributeRewards() external override
     {
         uint256 rewardsAmt = IERC20(rewardToken).balanceOf(address(this));
 

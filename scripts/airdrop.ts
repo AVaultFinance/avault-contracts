@@ -15,7 +15,7 @@ async function main() {
   officialUser = new NonceManager(await ethers.getSigner(officialAccount));
   const multiSend = await ethers.getContractAt("MultiSend", multiSendAddress, officialUser);
 
-  const bondNum = 12;
+  const bondNum = 3;
   let bondAddresses: string[] = [];
   for (const i in addressesArray) {
     if (ethers.utils.isAddress(addressesArray[i])) {
