@@ -158,7 +158,7 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
 
         uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
         if(wantAmt < _wantAmt){
-            _unfarm(_wantAmt);
+            _unfarm(_wantAmt - wantAmt);
             wantAmt = IERC20(wantAddress).balanceOf(address(this));
         }
 
@@ -451,6 +451,12 @@ abstract contract AVaultBase is Ownable, ReentrancyGuard, Pausable, ERC20 {
         require(earnedToToken1Path[0] == _earnedToToken1Path[0] && earnedToToken1Path[earnedToToken1Path.length - 1] == _earnedToToken1Path[_earnedToToken1Path.length - 1], "earnedToToken1Path");
         require(token0ToEarnedPath[0] == _token0ToEarnedPath[0] && token0ToEarnedPath[token0ToEarnedPath.length - 1] == _token0ToEarnedPath[_token0ToEarnedPath.length - 1], "token0ToEarnedPath");
         require(token1ToEarnedPath[0] == _token1ToEarnedPath[0] && token1ToEarnedPath[token1ToEarnedPath.length - 1] == _token1ToEarnedPath[_token1ToEarnedPath.length - 1], "token1ToEarnedPath");
+        earnedToWethPath = _earnedToWethPath;
+        wethToAVAPath = _wethToAVAPath;
+        earnedToToken0Path = _earnedToToken0Path;
+        earnedToToken1Path = _earnedToToken1Path;
+        token0ToEarnedPath = _token0ToEarnedPath;
+        token1ToEarnedPath = _token1ToEarnedPath;
         emit PathsUpdated();
     }
 
