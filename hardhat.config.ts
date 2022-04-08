@@ -6,7 +6,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import { mnemonic, BSCSCANAPIKEY} from '../secret.json';
+import { mnemonic } from '../secret.json';
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
     shidenMainnet: {
       url: "https://evm.shiden.astar.network",
       chainId: 336,
-      gasPrice: 1000000000,
+      gasPrice: 1100000000,
       accounts: {mnemonic: mnemonic}
     },
     astarMainnet: {
