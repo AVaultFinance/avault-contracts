@@ -40,7 +40,6 @@ async function main() {
         bondAddresses = [];
 
         await sleep(18000);
-        officialUser.incrementTransactionCount();
       }
     } else {
       console.log(`${addressesArray[i]} is not a valid address`);

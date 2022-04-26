@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    shidenTestnet: {
+    shibuya: {
       url: "https://rpc.shibuya.astar.network:8545",
       chainId: 81,
       gasPrice: 1000000000,

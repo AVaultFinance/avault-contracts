@@ -13,14 +13,15 @@ const kacWsdnLPAddress = "0x456C0082DE0048EE883881fF61341177FA1FEF40";
 const avaultPCSAddress = "0xFB6Ae2A33e95C21d06A583D762BAfEC0F4967403";
 
 const wsdnJpycAddress = "0x1Ba530cf929ea5bc7f1Af241495C97331Ddb4f70";
+const aJKU = "0x9d03BfE2e0BEDA103f1961A8595bF5d8b1F6FD18";
 
 
 async function main() {
   // We get the contract to deploy
 //   const IERC20 = await ethers.getContractFactory("IERC20");
   const officialUser = await ethers.getSigner(officialAccount)
-  const avault = await ethers.getContractAt("AVaultPCS", wsdnJpycAddress, officialUser);
-  const r = await avault.earn();
+  const avault = await ethers.getContractAt("AVaultPCS", aJKU, officialUser);
+  const r = await avault.convertDustToEarned();
   console.log(`r: ${JSON.stringify(r)}`);
 
 }
