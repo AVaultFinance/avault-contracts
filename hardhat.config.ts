@@ -7,6 +7,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import { mnemonic } from '../secret.json';
+import '@openzeppelin/hardhat-upgrades';
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.4",
+    version: "0.8.9",
     settings: {
       optimizer: {
         enabled: true,
@@ -45,19 +46,19 @@ const config: HardhatUserConfig = {
       gasPrice: 1000000000,
       accounts: {mnemonic: mnemonic}
     },
-    shidenMainnet: {
+    shiden: {
       url: "https://evm.shiden.astar.network",
       chainId: 336,
-      gasPrice: 1100000000,
-      accounts: {mnemonic: mnemonic}
-    },
-    astarMainnet: {
-      url: "https://rpc.astar.network:8545/",
-      chainId: 592,
       gasPrice: 1000000000,
       accounts: {mnemonic: mnemonic}
     },
-    bscMainnet: {
+    astar: {
+      url: "https://rpc.astar.network:8545/",
+      chainId: 592,
+      gasPrice: 1200000000,
+      accounts: {mnemonic: mnemonic}
+    },
+    bsc: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 5000000000,
